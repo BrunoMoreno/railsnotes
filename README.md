@@ -1,15 +1,16 @@
 # Notes API
 
-RESTful API for managing notes and categories, built with Ruby on Rails 8 (API-only mode) with cookie-based session authentication (via `has_secure_password`).
+RESTful API for managing notes and categories, built with Ruby on Rails 8 (API-only mode) with cookie-based session authentication (via `has_secure_password`) and a PostgreSQL database.
 
 ## Tech stack
 
 - [Ruby](https://www.ruby-lang.org/) **4.0.6** (see `.ruby-version`)
 - [Ruby on Rails](https://rubyonrails.org/) **8.1** (API-only)
-- [SQLite](https://www.sqlite.org/) as the database
+- [PostgreSQL](https://www.postgresql.org/) as the database
 - [Puma](https://github.com/puma/puma) as the web server
 - [rack-cors](https://github.com/cyu/rack-cors) for Cross-Origin Resource Sharing
 - [rswag-api](https://github.com/rswag/rswag) / [rswag-ui](https://github.com/rswag/rswag) for interactive OpenAPI docs at `/api-docs`
+- [Docker Compose](https://docs.docker.com/compose/) + [Kamal](https://kamal-deploy.org) for development/deployment containerization
 
 ## Getting started
 
@@ -17,22 +18,48 @@ RESTful API for managing notes and categories, built with Ruby on Rails 8 (API-o
 
 - Ruby 4.0.6
 - Bundler
+- PostgreSQL 15+ (or Docker for the containerized database)
 
 ### Setup
 
+Option A — local Ruby with a containerized database (recommended):
+
 ```sh
+cp .env.example .env
+docker compose up -d db
 bin/setup
 ```
 
-This installs dependencies, creates the databases, and loads the seed data.
+`bin/setup` clones the sample env, installs dependencies, starts the Postgres container (when Docker is available and no `DB_HOST` is set), creates the databases, and loads the seed data.
 
-Start the server:
+Option B — everything in Docker:
+
+```sh
+cp .env.example .env
+docker compose up
+```
+
+This builds the development image, prepares the database on boot, and serves the API at `http://localhost:3000`.
+
+Start the server (local Ruby, not containerized):
 
 ```sh
 bin/dev
 ```
 
-The API will be available at `http://localhost:3000`.
+The API will be available at `http://localhost:3000`. Interactive docs (Swagger UI) at `http://localhost:3000/api-docs`.
+
+### Configuration
+
+Connection settings come from environment variables (see `.env.example`):
+
+| Variable | Default | Description |
+| -------- | ------- | ----------- |
+| `DB_HOST` | `127.0.0.1` | Database host (`db` inside Docker Compose) |
+| `DB_PORT` | `5432` | Database port |
+| `DB_USERNAME` | `notesapp` | Database user |
+| `DB_PASSWORD` | `password` | Database password |
+| `PORT` | `3000` | Port exposed by Docker Compose |
 
 ## Quick start
 
@@ -222,11 +249,14 @@ bin/rails db:seed
 
 ## Running tests
 
-The test suite uses Minitest:
+The test suite uses Minitest. Make sure PostgreSQL is running (e.g. `docker compose up -d db`) and the test database is prepared:
 
 ```sh
+bin/rails db:test:prepare
 bin/rails test
 ```
+
+> The database user must have PostgreSQL superuser privileges during tests so Rails can disable foreign-key checks while loading fixtures (the user created by the official `postgres` image is a superuser by default; the local `mise` install needs `ALTER ROLE notesapp SUPERUSER;`).
 
 Run the full CI pipeline (style, security, and tests) locally:
 
