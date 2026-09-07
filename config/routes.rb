@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  mount Rswag::Ui::Engine => "/api-docs"
+  mount Rswag::Api::Engine => "/api-docs"
   post "signup" => "users#create", as: :signup
   resource :session, only: %i[ create destroy ]
   resources :passwords, param: :token, only: %i[ create update ]
