@@ -746,11 +746,16 @@
     "schemas": {
       "UserRegistration": {
         "type": "object",
-        "required": ["email_address", "password"],
+        "required": ["email_address", "password", "password_confirmation"],
+        "example": {
+          "email_address": "me@example.com",
+          "password": "password",
+          "password_confirmation": "password"
+        },
         "properties": {
-          "email_address": { "type": "string", "format": "email" },
-          "password": { "type": "string", "minLength": 1, "writeOnly": true },
-          "password_confirmation": { "type": "string", "writeOnly": true }
+          "email_address": { "type": "string", "format": "email", "example": "me@example.com" },
+          "password": { "type": "string", "minLength": 1, "example": "password" },
+          "password_confirmation": { "type": "string", "minLength": 1, "example": "password" }
         }
       },
       "UserSummary": {
@@ -765,9 +770,13 @@
       "LoginCredentials": {
         "type": "object",
         "required": ["email_address", "password"],
+        "example": {
+          "email_address": "me@example.com",
+          "password": "password"
+        },
         "properties": {
-          "email_address": { "type": "string", "format": "email" },
-          "password": { "type": "string", "writeOnly": true }
+          "email_address": { "type": "string", "format": "email", "example": "me@example.com" },
+          "password": { "type": "string", "minLength": 1, "example": "password" }
         }
       },
       "Note": {
@@ -787,11 +796,17 @@
       "NoteInput": {
         "type": "object",
         "required": ["category_id"],
+        "example": {
+          "title": "Minha nota",
+          "content": "Conteúdo da nota",
+          "is_public": true,
+          "category_id": 1
+        },
         "properties": {
-          "title": { "type": ["string", "null"] },
-          "content": { "type": ["string", "null"] },
-          "is_public": { "type": ["boolean", "null"] },
-          "category_id": { "type": "integer", "description": "Category id (required; category must exist)" }
+          "title": { "type": ["string", "null"], "example": "Minha nota" },
+          "content": { "type": ["string", "null"], "example": "Conteúdo da nota" },
+          "is_public": { "type": ["boolean", "null"], "example": true },
+          "category_id": { "type": "integer", "description": "Category id (required; category must exist)", "example": 1 }
         }
       },
       "Category": {
@@ -807,9 +822,13 @@
       },
       "CategoryInput": {
         "type": "object",
+        "example": {
+          "title": "Pessoal",
+          "slug": "pessoal"
+        },
         "properties": {
-          "title": { "type": "string" },
-          "slug": { "type": "string", "description": "Auto-generated from title when blank" }
+          "title": { "type": "string", "example": "Pessoal" },
+          "slug": { "type": "string", "description": "Auto-generated from title when blank", "example": "pessoal" }
         }
       },
       "Message": {
