@@ -9,6 +9,7 @@ RESTful API for managing notes and categories, built with Ruby on Rails 8 (API-o
 - [SQLite](https://www.sqlite.org/) as the database
 - [Puma](https://github.com/puma/puma) as the web server
 - [rack-cors](https://github.com/cyu/rack-cors) for Cross-Origin Resource Sharing
+- [rswag-api](https://github.com/rswag/rswag) / [rswag-ui](https://github.com/rswag/rswag) for interactive OpenAPI docs at `/api-docs`
 
 ## Getting started
 
@@ -61,6 +62,8 @@ curl http://localhost:3000/api/v1/notes -b cookies.txt
 ## API endpoints
 
 Requests and responses use JSON (`Content-Type: application/json`). Except for authentication, the health check, and the welcome message, all endpoints require a valid session cookie (set after signup/sign-in).
+
+Interactive OpenAPI documentation is available at `http://localhost:3000/api-docs` (Swagger UI), served from the spec at `/api-docs/v1/openapi.json`. Use **Try it out** — sign in first via `POST /session` so the session cookie is sent with protected endpoints.
 
 ### Authentication
 
@@ -127,6 +130,8 @@ curl -X POST http://localhost:3000/session \
 | `GET` | `/api/v1/notes` | List all notes |
 | `POST` | `/api/v1/notes` | Create a note |
 | `GET` | `/api/v1/notes/:id` | Show a single note |
+| `PATCH` / `PUT` | `/api/v1/notes/:id` | Update a note |
+| `DELETE` | `/api/v1/notes/:id` | Delete a note |
 
 #### Create a note
 
@@ -153,7 +158,7 @@ curl -X POST http://localhost:3000/api/v1/notes \
 | `is_public` | boolean | Whether the note is public |
 | `category_id` | integer | ID of the associated category (**required**) |
 
-Notes are owned by the signed-in user: `index` and `show` only return notes belonging to the current user, and `create` links the note to the current user automatically (`user_id` is not accepted as a parameter).
+Notes are owned by the signed-in user: `index`, `show`, `update`, and `destroy` only operate on notes belonging to the current user, and `create` links the note to the current user automatically (`user_id` is not accepted as a parameter).
 
 **Create response (201):**
 
