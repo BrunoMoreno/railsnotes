@@ -51,6 +51,46 @@ class ApiDocsTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "request body schemas match the parameter wrapping the API expects" do
+    wrapped = [
+      [ "post", "/signup", "user" ],
+      [ "post", "/api/v1/notes", "note" ],
+      [ "put", "/api/v1/notes/{id}", "note" ],
+      [ "patch", "/api/v1/notes/{id}", "note" ],
+      [ "post", "/api/v1/categories", "category" ],
+      [ "put", "/api/v1/categories/{id}", "category" ],
+      [ "patch", "/api/v1/categories/{id}", "category" ]
+    ]
+
+    wrapped.each do |method, path, key|
+      schema = deref(@spec.dig("paths", path, method, "requestBody", "content", "application/json", "schema"))
+      assert schema["properties"].key?(key),
+             "expected #{method.upcase} #{path} request body to wrap params in #{key}"
+    end
+
+    flat = [
+      [ "post", "/session" ],
+      [ "post", "/passwords" ],
+      [ "patch", "/passwords/{token}" ]
+    ]
+
+    flat.each do |method, path|
+      schema = deref(@spec.dig("paths", path, method, "requestBody", "content", "application/json", "schema"))
+      keys = schema["properties"].keys
+      refute (keys & %w[user note category]).any?,
+             "expected #{method.upcase} #{path} request body to be flat (got #{keys})"
+    end
+  end
+
+  test "signup works with the exact request body documented in the spec" do
+    body = @spec.dig("paths", "/signup", "post", "requestBody", "content", "application/json", "schema", "example")
+
+    post "/signup", params: body.to_json, headers: { "Content-Type" => "application/json" }
+
+    assert_response :created
+    assert_equal "me@example.com", JSON.parse(response.body)["email_address"]
+  end
+
   test "spec documents protected operations with the cookie auth scheme" do
     protected_ops = [
       [ "delete", "/session" ],
@@ -159,6 +199,13 @@ class ApiDocsTest < ActionDispatch::IntegrationTest
   end
 
   private
+
+  def deref(schema)
+    return schema unless schema["$ref"]
+
+    name = schema["$ref"].delete_prefix("#/components/schemas/")
+    @spec.dig("components", "schemas", name)
+  end
 
   def run_scenario(method, path, sign_in:, params:)
     sign_in_as(@user) if sign_in
