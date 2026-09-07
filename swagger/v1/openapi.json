@@ -23,7 +23,20 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/UserRegistration" }
+              "schema": {
+                "type": "object",
+                "required": ["user"],
+                "example": {
+                  "user": {
+                    "email_address": "me@example.com",
+                    "password": "password",
+                    "password_confirmation": "password"
+                  }
+                },
+                "properties": {
+                  "user": { "$ref": "#/components/schemas/UserRegistration" }
+                }
+              }
             }
           }
         },
@@ -253,7 +266,21 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/NoteInput" }
+              "schema": {
+                "type": "object",
+                "required": ["note"],
+                "example": {
+                  "note": {
+                    "title": "Minha nota",
+                    "content": "Conteúdo da nota",
+                    "is_public": true,
+                    "category_id": 1
+                  }
+                },
+                "properties": {
+                  "note": { "$ref": "#/components/schemas/NoteInput" }
+                }
+              }
             }
           }
         },
@@ -351,7 +378,21 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/NoteInput" }
+              "schema": {
+                "type": "object",
+                "required": ["note"],
+                "example": {
+                  "note": {
+                    "title": "Minha nota",
+                    "content": "Conteúdo da nota",
+                    "is_public": true,
+                    "category_id": 1
+                  }
+                },
+                "properties": {
+                  "note": { "$ref": "#/components/schemas/NoteInput" }
+                }
+              }
             }
           }
         },
@@ -414,7 +455,21 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/NoteInput" }
+              "schema": {
+                "type": "object",
+                "required": ["note"],
+                "example": {
+                  "note": {
+                    "title": "Minha nota",
+                    "content": "Conteúdo da nota",
+                    "is_public": true,
+                    "category_id": 1
+                  }
+                },
+                "properties": {
+                  "note": { "$ref": "#/components/schemas/NoteInput" }
+                }
+              }
             }
           }
         },
@@ -531,7 +586,19 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/CategoryInput" }
+              "schema": {
+                "type": "object",
+                "required": ["category"],
+                "example": {
+                  "category": {
+                    "title": "Pessoal",
+                    "slug": "pessoal"
+                  }
+                },
+                "properties": {
+                  "category": { "$ref": "#/components/schemas/CategoryInput" }
+                }
+              }
             }
           }
         },
@@ -619,7 +686,19 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/CategoryInput" }
+              "schema": {
+                "type": "object",
+                "required": ["category"],
+                "example": {
+                  "category": {
+                    "title": "Pessoal",
+                    "slug": "pessoal"
+                  }
+                },
+                "properties": {
+                  "category": { "$ref": "#/components/schemas/CategoryInput" }
+                }
+              }
             }
           }
         },
@@ -666,7 +745,19 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/CategoryInput" }
+              "schema": {
+                "type": "object",
+                "required": ["category"],
+                "example": {
+                  "category": {
+                    "title": "Pessoal",
+                    "slug": "pessoal"
+                  }
+                },
+                "properties": {
+                  "category": { "$ref": "#/components/schemas/CategoryInput" }
+                }
+              }
             }
           }
         },
@@ -747,11 +838,6 @@
       "UserRegistration": {
         "type": "object",
         "required": ["email_address", "password", "password_confirmation"],
-        "example": {
-          "email_address": "me@example.com",
-          "password": "password",
-          "password_confirmation": "password"
-        },
         "properties": {
           "email_address": { "type": "string", "format": "email", "example": "me@example.com" },
           "password": { "type": "string", "minLength": 1, "example": "password" },
@@ -796,12 +882,6 @@
       "NoteInput": {
         "type": "object",
         "required": ["category_id"],
-        "example": {
-          "title": "Minha nota",
-          "content": "Conteúdo da nota",
-          "is_public": true,
-          "category_id": 1
-        },
         "properties": {
           "title": { "type": ["string", "null"], "example": "Minha nota" },
           "content": { "type": ["string", "null"], "example": "Conteúdo da nota" },
@@ -822,10 +902,6 @@
       },
       "CategoryInput": {
         "type": "object",
-        "example": {
-          "title": "Pessoal",
-          "slug": "pessoal"
-        },
         "properties": {
           "title": { "type": "string", "example": "Pessoal" },
           "slug": { "type": "string", "description": "Auto-generated from title when blank", "example": "pessoal" }
