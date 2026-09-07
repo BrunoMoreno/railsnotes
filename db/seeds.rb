@@ -5,25 +5,28 @@
 # Example:
 #
 # Create default categories used by the application.
-["work", "programming", "personal", "games", "movies"].each do |category_title|
+demo_user = User.find_or_create_by!(email_address: "demo@example.com") do |user|
+  user.password = "password"
+end
+
+[ "work", "programming", "personal", "games", "movies" ].each do |category_title|
   category = Category.find_or_create_by!(title: category_title)
 
   case category_title
   when "work"
-    Note.find_or_create_by!(title: "Weekly planning", content: "Review priorities and plan the week.", category: category)
-    Note.find_or_create_by!(title: "Inbox cleanup", content: "Sort pending tasks and archive old notes.", category: category)
+    Note.find_or_create_by!(title: "Weekly planning", content: "Review priorities and plan the week.", category: category, user: demo_user)
+    Note.find_or_create_by!(title: "Inbox cleanup", content: "Sort pending tasks and archive old notes.", category: category, user: demo_user)
   when "programming"
-    Note.find_or_create_by!(title: "Rails ideas", content: "Explore a better search feature for notes.", category: category)
-    Note.find_or_create_by!(title: "Bug list", content: "Document the current issues to fix in the next sprint.", category: category)
+    Note.find_or_create_by!(title: "Rails ideas", content: "Explore a better search feature for notes.", category: category, user: demo_user)
+    Note.find_or_create_by!(title: "Bug list", content: "Document the current issues to fix in the next sprint.", category: category, user: demo_user)
   when "personal"
-    Note.find_or_create_by!(title: "Groceries", content: "Milk, eggs, vegetables, and coffee beans.", category: category)
-    Note.find_or_create_by!(title: "Self-care", content: "Schedule time to rest and exercise this week.", category: category)
+    Note.find_or_create_by!(title: "Groceries", content: "Milk, eggs, vegetables, and coffee beans.", category: category, user: demo_user)
+    Note.find_or_create_by!(title: "Self-care", content: "Schedule time to rest and exercise this week.", category: category, user: demo_user)
   when "games"
-    Note.find_or_create_by!(title: "Game night", content: "Invite friends for the weekend co-op session.", category: category)
-    Note.find_or_create_by!(title: "Wishlist", content: "Save the games to try next on Steam and Switch.", category: category)
+    Note.find_or_create_by!(title: "Game night", content: "Invite friends for the weekend co-op session.", category: category, user: demo_user)
+    Note.find_or_create_by!(title: "Wishlist", content: "Save the games to try next on Steam and Switch.", category: category, user: demo_user)
   when "movies"
-    Note.find_or_create_by!(title: "Watchlist", content: "Movies and series to watch when there is time.", category: category)
-    Note.find_or_create_by!(title: "Favorites", content: "Keep a short list of films worth rewatching.", category: category)
+    Note.find_or_create_by!(title: "Watchlist", content: "Movies and series to watch when there is time.", category: category, user: demo_user)
+    Note.find_or_create_by!(title: "Favorites", content: "Keep a short list of films worth rewatching.", category: category, user: demo_user)
   end
 end
-

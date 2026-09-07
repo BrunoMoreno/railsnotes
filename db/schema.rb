@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_07_134624) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_07_144929) do
   create_table "categories", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "slug"
@@ -25,8 +25,29 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_07_134624) do
     t.boolean "is_public"
     t.string "title"
     t.datetime "updated_at", null: false
+    t.integer "user_id"
     t.index ["category_id"], name: "index_notes_on_category_id"
+    t.index ["user_id"], name: "index_notes_on_user_id"
+  end
+
+  create_table "sessions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "ip_address"
+    t.datetime "updated_at", null: false
+    t.string "user_agent"
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_sessions_on_user_id"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "email_address", null: false
+    t.string "password_digest", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
   add_foreign_key "notes", "categories"
+  add_foreign_key "notes", "users"
+  add_foreign_key "sessions", "users"
 end

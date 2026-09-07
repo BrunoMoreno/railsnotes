@@ -1,11 +1,11 @@
 class NotesController < ApplicationController
   def index
-    @notes = Note.all
+    @notes = Current.user.notes
     render json: @notes
   end
 
   def create
-    @note = Note.new(note_params)
+    @note = Current.user.notes.new(note_params)
 
     if @note.save
       render json: @note, status: :created, location: @note
@@ -15,7 +15,7 @@ class NotesController < ApplicationController
   end
 
   def show
-    @note = Note.find(params[:id])
+    @note = Current.user.notes.find(params[:id])
     render json: @note
   end
 
