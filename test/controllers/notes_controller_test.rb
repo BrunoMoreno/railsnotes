@@ -203,4 +203,60 @@ class NotesControllerTest < ActionDispatch::IntegrationTest
     get note_url(other_note), as: :json
     assert_response :not_found
   end
+
+  # PATCH /api/v1/notes/:id
+
+  test "should update note" do
+    patch note_url(@note),
+          params: {
+            note: {
+              title: "Título atualizado",
+              content: "Conteúdo atualizado",
+              is_public: false,
+              category_id: @category.id
+            }
+          },
+          as: :json
+
+    assert_response :success
+    @note.reload
+    assert_equal "Título atualizado", @note.title
+    assert_equal "Conteúdo atualizado", @note.content
+    assert_equal false, @note.is_public
+  end
+
+  test "should not update note belonging to another user" do
+    other_note = Note.create!(title: "Privada", content: "Segredo", category: @category, user: users(:two))
+
+    patch note_url(other_note),
+          params: {
+            note: {
+              title: "Tentativa de alteração",
+              content: "Conteúdo não permitido"
+            }
+          },
+          as: :json
+
+    assert_response :not_found
+  end
+
+  # DELETE /api/v1/notes/:id
+
+  test "should destroy note" do
+    assert_difference("Note.count", -1) do
+      delete note_url(@note), as: :json
+    end
+
+    assert_response :no_content
+  end
+
+  test "should not destroy note belonging to another user" do
+    other_note = Note.create!(title: "Privada", content: "Segredo", category: @category, user: users(:two))
+
+    assert_no_difference("Note.count") do
+      delete note_url(other_note), as: :json
+    end
+
+    assert_response :not_found
+  end
 end
