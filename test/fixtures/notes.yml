@@ -3,9 +3,11 @@ one:
   content: Aprenda os fundamentos do Rails
   is_public: true
   category: one
+  user: one
 
 two:
   title: JavaScript Básico
   content: Variáveis e funções em JavaScript
   is_public: false
   category: two
+  user: one

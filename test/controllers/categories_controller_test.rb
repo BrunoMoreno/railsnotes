@@ -2,7 +2,23 @@ require "test_helper"
 
 class CategoriesControllerTest < ActionDispatch::IntegrationTest
   setup do
+    @user = users(:one)
     @category = categories(:one)
+    sign_in_as(@user)
+  end
+
+  # Authentication
+
+  test "requires authentication for index" do
+    sign_out
+    get categories_url, as: :json
+    assert_response :unauthorized
+  end
+
+  test "requires authentication for create" do
+    sign_out
+    post categories_url, params: { category: { title: "Teste" } }, as: :json
+    assert_response :unauthorized
   end
 
   # GET /api/v1/categories
@@ -156,8 +172,8 @@ class CategoriesControllerTest < ActionDispatch::IntegrationTest
 
   test "destroy removes associated notes" do
     category = Category.create!(title: "To Delete", slug: "to-delete")
-    Note.create!(title: "Note 1", content: "Body", category: category)
-    Note.create!(title: "Note 2", content: "Body", category: category)
+    Note.create!(title: "Note 1", content: "Body", category: category, user: @user)
+    Note.create!(title: "Note 2", content: "Body", category: category, user: @user)
 
     assert_difference({ "Category.count" => -1, "Note.count" => -2 }) do
       delete category_url(category), as: :json

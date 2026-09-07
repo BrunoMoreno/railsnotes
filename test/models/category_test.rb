@@ -42,7 +42,7 @@ class CategoryTest < ActiveSupport::TestCase
 
   test "destroys dependent notes" do
     category = categories(:one)
-    Note.create!(title: "Test note", content: "Content", category: category)
+    Note.create!(title: "Test note", content: "Content", category: category, user: users(:one))
 
     assert_difference "Note.count", -category.notes.count do
       category.destroy!
