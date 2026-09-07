@@ -1,40 +1,50 @@
-# SQLite. Versions 3.8.0 and up are supported.
-#   gem install sqlite3
+# PostgreSQL. Versions 15, 16 and 17 are supported.
+#   gem "pg"
 #
-#   Ensure the SQLite 3 gem is defined in your Gemfile
-#   gem "sqlite3"
+# Connection settings are taken from environment variables so the same
+# config works locally, in Docker Compose, in CI and on production (Kamal).
+#
+#   DB_HOST      - database host            (default: 127.0.0.1)
+#   DB_PORT      - database port            (default: 5432)
+#   DB_USERNAME  - database user            (default: notesapp)
+#   DB_PASSWORD  - database password        (default: password)
+#   DB_DATABASE  - production database name (default: notesapp_production)
 #
 default: &default
-  adapter: sqlite3
-  max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  timeout: 5000
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  host: <%= ENV.fetch("DB_HOST", "127.0.0.1") %>
+  port: <%= ENV.fetch("DB_PORT", "5432") %>
+  username: <%= ENV.fetch("DB_USERNAME", "notesapp") %>
+  password: <%= ENV.fetch("DB_PASSWORD", "password") %>
 
 development:
   <<: *default
-  database: storage/development.sqlite3
+  database: notesapp_development
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: storage/test.sqlite3
+  database: notesapp_test
 
-# Store production database in the storage/ directory, which by default
-# is mounted as a persistent Docker volume in config/deploy.yml.
+# Production uses one PostgreSQL server; cache, queue and cable
+# connections share the primary credentials but use separate databases.
 production:
-  primary:
+  primary: &production_production
     <<: *default
-    database: storage/production.sqlite3
+    database: <%= ENV.fetch("DB_DATABASE") { "notesapp_production" } %>
   cache:
-    <<: *default
-    database: storage/production_cache.sqlite3
+    <<: *production_production
+    database: notesapp_production_cache
     migrations_paths: db/cache_migrate
   queue:
-    <<: *default
-    database: storage/production_queue.sqlite3
+    <<: *production_production
+    database: notesapp_production_queue
     migrations_paths: db/queue_migrate
   cable:
-    <<: *default
-    database: storage/production_cable.sqlite3
+    <<: *production_production
+    database: notesapp_production_cable
     migrations_paths: db/cable_migrate
