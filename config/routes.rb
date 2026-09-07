@@ -1,9 +1,12 @@
 Rails.application.routes.draw do
+  post "signup" => "users#create", as: :signup
+  resource :session, only: %i[ create destroy ]
+  resources :passwords, param: :token, only: %i[ create update ]
 
   scope :api do
     scope :v1 do
-      resources :notes, only: [:index, :create, :show]
-      resources :categories, only: [:index, :create, :show, :update, :destroy]
+      resources :notes, only: [ :index, :create, :show ]
+      resources :categories, only: [ :index, :create, :show, :update, :destroy ]
     end
   end
 
