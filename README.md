@@ -33,6 +33,31 @@ bin/dev
 
 The API will be available at `http://localhost:3000`.
 
+## Quick start
+
+```sh
+# 1. Sign up (already seeded? use demo@example.com / password)
+curl -X POST http://localhost:3000/signup \
+  -H "Content-Type: application/json" \
+  -c cookies.txt \
+  -d '{"user":{"email_address":"me@example.com","password":"password","password_confirmation":"password"}}'
+
+# 2. Sign in and keep the session cookie in cookies.txt
+curl -X POST http://localhost:3000/session \
+  -H "Content-Type: application/json" \
+  -b cookies.txt -c cookies.txt \
+  -d '{"email_address":"me@example.com","password":"password"}'
+
+# 3. Create a note (belongs to the signed-in user)
+curl -X POST http://localhost:3000/api/v1/notes \
+  -H "Content-Type: application/json" \
+  -b cookies.txt -c cookies.txt \
+  -d '{"note":{"title":"First note","content":"Hello","is_public":true,"category_id":1}}'
+
+# 4. List your notes
+curl http://localhost:3000/api/v1/notes -b cookies.txt
+```
+
 ## API endpoints
 
 Requests and responses use JSON (`Content-Type: application/json`). Except for authentication, the health check, and the welcome message, all endpoints require a valid session cookie (set after signup/sign-in).
@@ -75,6 +100,19 @@ curl -X POST http://localhost:3000/session \
 
 (`-b`/`-c` keep the `session_id` cookie across `curl` calls — the README examples use it implicitly.)
 
+**Responses:**
+
+```json
+// POST /session (success, 200)
+{ "message": "Signed in successfully." }
+
+// POST /session (invalid credentials, 401)
+{ "error": "Invalid email address or password." }
+
+// POST /signup (success, 201)
+{ "id": 1, "email_address": "me@example.com", "created_at": "2026-09-07T15:00:00.000Z" }
+```
+
 ### Health check
 
 | Method | Endpoint | Description |
@@ -116,6 +154,21 @@ curl -X POST http://localhost:3000/api/v1/notes \
 | `category_id` | integer | ID of the associated category (**required**) |
 
 Notes are owned by the signed-in user: `index` and `show` only return notes belonging to the current user, and `create` links the note to the current user automatically (`user_id` is not accepted as a parameter).
+
+**Create response (201):**
+
+```json
+{
+  "id": 1,
+  "title": "First note",
+  "content": "Hello",
+  "is_public": true,
+  "category_id": 1,
+  "user_id": 1,
+  "created_at": "2026-09-07T15:00:00.000Z",
+  "updated_at": "2026-09-07T15:00:00.000Z"
+}
+```
 
 ### Categories
 
