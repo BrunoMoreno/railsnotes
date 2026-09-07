@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-gem "json", "~> 2.7.2"
+gem "json", "~> 2.21.2"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 8.1.3", ">= 8.1.3.1"
